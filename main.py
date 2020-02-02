@@ -1,5 +1,6 @@
 from src.Character import Character
 import random as rand
+import os
 
 points = 6
 state = [1, 1, 1]
@@ -70,3 +71,5 @@ if ch.heal < 1:
 
 if enemy.heal < 1:
     print("\nPlayer win")
+
+os.system("pause")
