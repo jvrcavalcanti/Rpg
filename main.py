@@ -1,5 +1,5 @@
 from src.Character import Character
-import numpy as np
+import random as rand
 
 points = 6
 state = [1, 1, 1]
@@ -21,14 +21,14 @@ while points > 0:
 ch = Character(state[0], state[1], state[2])
 # print("\nPlayer:\n{}".format(ch))
 
-random_state = np.random.choice(3, 6)
+random_state = rand.choices([0, 1, 2], k = 6)
 state = [1, 1, 1]
 for i in random_state:
     state[i - 1] += 1
 enemy = Character(state[0], state[1], state[2])
 # print("\nEnemy:\n{}".format(enemy))
 
-round = np.random.randint(0, 1)
+round = rand.randint(0, 1)
 
 while enemy.heal > 0 and  ch.heal > 0:
     if round == 0:
@@ -48,7 +48,7 @@ while enemy.heal > 0 and  ch.heal > 0:
         if op is 2:
             ch.active_shield()
     if round is 1:
-        op = np.random.randint(1, 4)
+        op = rand.randint(1, 4)
 
         if op is 1 or op is 3:
             ch.defend(enemy)
