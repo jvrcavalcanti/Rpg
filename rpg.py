@@ -32,34 +32,55 @@ enemy = Character(state[0], state[1], state[2])
 round = rand.randint(0, 1)
 
 while enemy.heal > 0 and  ch.heal > 0:
+    round = 1 if round == 0 else 0
+
     if round == 0:
         print("\nPlayer:\n{}\n".format(ch))
         print("\nEnemy:\n{}\n".format(enemy))
+
     if round == 0:
+        if ch.wait > 0:
+            ch.wait -= 1
+            print("Em espera")
+            continue
+
         try:
-            op = int(input("Escolha uma opção para fazer uma ação:\nAttack: 1\nDefender: 2\n"))
+            op = int(input("Escolha uma opção para fazer uma ação:\nWeak Attack: 1\nDefender: 2\nStrong Attack: 3\n"))
+
+            if op not in [1, 2, 3]:
+                print("\nValor incorreto")
+                continue
         except Exception:
             print("Opção inválida")
 
         if op is 1:
-            enemy.defend(ch)
-            if ch.shield:
-                ch.desactive_shield()
+            ch.weak_attack(enemy)
+
+        if op is 3:
+            ch.strong_attack(enemy)
+
+        ch.desative_shield()
 
         if op is 2:
             ch.active_shield()
+
     if round is 1:
-        op = rand.randint(1, 4)
+        op = rand.randint(1, 5)
+
+        if enemy.wait > 0:
+            enemy.wait -= 1
+            continue
 
         if op is 1 or op is 3:
-            ch.defend(enemy)
-            if enemy.shield:
-                enemy.desactive_shield()
+            enemy.weak_attack(ch)
+
+        if op is 4:
+            enemy.strong_attack(ch)
+
+        enemy.desative_shield()
 
         if op is 2:
             enemy.active_shield()
-
-    round = 1 if round == 0 else 0
 
 print("\n/************************ End game ********************************/")
 

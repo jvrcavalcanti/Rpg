@@ -1,26 +1,36 @@
 class Character(object):
     def __init__(self, heal = 3, attack = 3, armor = 3):
-        self.heal = 7 * heal + 50
-        self.attack = 3 * attack + 13
-        self.armor = 2 * armor + 4
+        self.heal = float("{0:.2f}".format(2 ** heal + 50))
+        self.attack = float("{0:.2f}".format(2.75 * attack + 18))
+        self.armor = float("{0:.2f}".format(2.5 * armor + 10))
         self.shield = False
+        self.wait = 0
 
-    def defend(self, enemy):
-        damage = enemy.attack - self.armor
+    def weak_attack(self, enemy):
+        damage = self.attack - enemy.armor
+
+        if damage < 0:
+             damage =0
+
+        enemy.heal -= damage
+
+    def strong_attack(self, enemy):
+        damage = (self.attack * 1.5) - enemy.armor
 
         if damage < 0:
             damage = 0
 
-        self.heal -= damage
+        enemy.heal -= damage
+        self.wait += 1
 
     def active_shield(self):
         if self.shield is False:
-            self.armor *= 1.5
+            self.armor *= 1.2
             self.shield = True
 
-    def desactive_shield(self):
+    def desative_shield(self):
         if self.shield is True:
-            self.armor /= 1.5
+            self.armor /= 1.2
             self.shield = False
 
     def __repr__(self):
