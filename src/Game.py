@@ -1,6 +1,5 @@
 from Character import Character
-from classes.Warrior import Warrior
-from classes.Paladin import Paladin
+from Classes import Classes
 import random as rand
 import os
 
@@ -9,24 +8,31 @@ class Game(object):
     def __init__(self):
         self.player: Character = None
         self.enemy: Character = None
-        self.classes = ["Warrior", "Paladin"]
 
     def get_classes(self, op):
+        return Classes.dict()[op]
+
+    def run_command(self, op, cha: Character, cha2: Character):
+        cha.desative_shield()
         return {
-            1: Warrior(),
-            2: Paladin()
-        }[op]
+            1: cha.weak_attack,
+            2: cha.active_shield,
+            3: cha.strong_attack,
+            4: cha.magic_attack
+        }[op](cha2)
 
     def start(self):
         print("\nEscolha a classe")
 
-        op = self.user_input(self.classes)
+        classes = Classes.list()
+
+        op = self.user_input(classes)
         
-        while op not in range(1, len(self.classes) + 1):
-            op = self.user_input(self.classes)
+        while op not in range(1, len(classes) + 1):
+            op = self.user_input(classes)
 
         self.player = self.get_classes(op)
-        self.enemy = self.get_classes(rand.randint(1, len(self.classes)))
+        self.enemy = self.get_classes(rand.randint(1, len(classes)))
 
 
     def end(self):
@@ -66,7 +72,7 @@ class Game(object):
 
 
     def run(self):
-        round = rand.randint(0, 1)
+        round = 1
 
         while self.enemy.life > 0 and  self.player.life > 0:
             self.player.update()
@@ -84,19 +90,14 @@ class Game(object):
                     print("\nEm espera")
                     continue
 
-                op = self.user_input(["Weak Attack", "Defender", "Strong Attack"])
+                op = self.user_input(["Weak Attack", "Strong Attack", "Magic Attack", "Defender"])
 
-                if op == 1:
-                    self.player.weak_attack(self.enemy)
+                if op is None:
+                    round = 1
+                    continue
 
-                if op == 3:
-                    self.player.strong_attack(self.enemy)
-
-                if op == 2:
-                    self.player.active_shield()
-                else:
-                    self.player.desative_shield()
-
+                self.run_command(op, self.player, self.enemy)
+                
             if round == 1:
                 op = rand.randint(1, 5)
 
@@ -104,15 +105,9 @@ class Game(object):
                     self.enemy.wait -= 1
                     continue
 
-                if op == 1 or op == 3:
-                    self.enemy.weak_attack(self.player)
+                if op == 5:
+                    op = 1
 
-                if op == 4:
-                    self.enemy.strong_attack(self.player)
-
-                if op == 2:
-                    self.enemy.active_shield()
-                else:
-                    self.enemy.desative_shield()
+                self.run_command(op, self.enemy, self.player)
         self.end()
         
