@@ -10,15 +10,15 @@ class Game(object):
         self.enemy: Character = None
 
     def get_classes(self, op):
-        return Classes.dict()[op]
+        return Classes.dict()[op]()
 
     def run_command(self, op, cha: Character, cha2: Character):
         cha.desative_shield()
         return {
             1: cha.weak_attack,
-            2: cha.active_shield,
-            3: cha.strong_attack,
-            4: cha.magic_attack
+            2: cha.strong_attack,
+            3: cha.magic_attack,
+            4: cha.active_shield
         }[op](cha2)
 
     def start(self):

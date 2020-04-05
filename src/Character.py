@@ -1,5 +1,6 @@
 from __future__ import annotations
 from enum import Enum
+import random
 
 
 class Type(Enum):
@@ -13,13 +14,17 @@ class Character(object):
         # Base
         self.life = float("{0:.2f}".format(life ** 2 + 50))
         self.attack = float("{0:.2f}".format(2.75 * attack + 18))
+        self.critical_chance = float("{0:.2f}".format(10 * attack))
         self.armor = float("{0:.2f}".format(2.5 * armor + 10))
-        self.magic = float("{0:.2f}".format(12 * magic))
-        self.magic_resistence = float("{0:.2f}".format(3 * magic + 8))
+        self.magic = float("{0:.2f}".format(8 * magic))
+        self.magic_resistence = float("{0:.2f}".format(4 * magic + 15))
 
         # Increments
         self.shield_increment = 1.4
+        self.weaK_increment = 1.0
         self.strong_increment = 1.2
+        self.magic_increment = 1.0
+        self.critical_damage = 1.5
 
         # others
         self.shield = False
@@ -28,6 +33,7 @@ class Character(object):
     def update(self):
         self.life = float("{0:.2f}".format(self.life))
         self.attack = float("{0:.2f}".format(self.attack))
+        self.critical_chance = float("{0:.2f}".format(self.critical_chance))
         self.armor = float("{0:.2f}".format(self.armor))
         self.magic = float("{0:.2f}".format(self.magic))
         self.magic_resistence = float("{0:.2f}".format(self.magic_resistence))
@@ -41,6 +47,10 @@ class Character(object):
         if type is Type.Physical:
             damage = attack - enemy.armor
 
+            if random.choice(range(1, 100)) <= self.critical_chance:
+                damage = (attack * self.critical_damage) - enemy.armor
+                print("Critical Attack")
+
         if damage < 0:
             damage = 0
 
@@ -48,10 +58,10 @@ class Character(object):
 
 
     def magic_attack(self, enemy):
-        self.attack_generic(self.magic, enemy, Type.Magic)
+        self.attack_generic(self.magic * self.magic_increment, enemy, Type.Magic)
 
     def weak_attack(self, enemy):
-        self.attack_generic(self.attack, enemy, Type.Physical)
+        self.attack_generic(self.attack * self.weaK_increment, enemy, Type.Physical, )
 
     def strong_attack(self, enemy):
         self.attack_generic(self.attack * self.strong_increment, enemy, Type.Physical)
