@@ -7,8 +7,10 @@ verify_ssl = true
 pyinstaller = "*"
 
 [packages]
+colorama = "*"
 
 [scripts]
+start = "python src/main.py"
 build = "pyinstaller src/main.py --onefile -F -n rpg"
 
 [requires]

@@ -1,9 +1,10 @@
 from __future__ import annotations
 from enum import Enum
 import random
+from colorama import Fore, Style
 
 
-class Type(Enum):
+class TypeAttack(Enum):
     Magic = 1
     Physical = 2
 
@@ -12,7 +13,7 @@ class Character(object):
         self.type = "Character"
 
         # Base
-        self.life = float("{0:.2f}".format(life ** 2 + 50))
+        self.life = float("{0:.2f}".format(life ** 3 + 150))
         self.attack = float("{0:.2f}".format(2.75 * attack + 18))
         self.critical_chance = float("{0:.2f}".format(10 * attack))
         self.armor = float("{0:.2f}".format(2.5 * armor + 10))
@@ -23,12 +24,16 @@ class Character(object):
         self.shield_increment = 1.4
         self.weaK_increment = 1.0
         self.strong_increment = 1.2
-        self.magic_increment = 1.0
+        self.magic_increment = 0.8
         self.critical_damage = 1.5
 
         # others
         self.shield = False
         self.wait = 0
+        self.moviments = []
+
+    def add_moviments(self, moviment):
+        self.moviments.append(moviment)
 
     def update(self):
         self.life = float("{0:.2f}".format(self.life))
@@ -38,18 +43,18 @@ class Character(object):
         self.magic = float("{0:.2f}".format(self.magic))
         self.magic_resistence = float("{0:.2f}".format(self.magic_resistence))
 
-    def attack_generic(self, attack, enemy: Character, type: Type):
+    def attack_generic(self, attack, enemy: Character, type: TypeAttack):
         damage = 0
 
-        if type is Type.Magic:
+        if type is TypeAttack.Magic:
             damage = attack - enemy.magic_resistence
 
-        if type is Type.Physical:
+        if type is TypeAttack.Physical:
             damage = attack - enemy.armor
 
             if random.choice(range(1, 100)) <= self.critical_chance:
                 damage = (attack * self.critical_damage) - enemy.armor
-                print("Critical Attack")
+                print(Fore.RED + "Critical Attack" + Style.RESET_ALL)
 
         if damage < 0:
             damage = 0
@@ -58,13 +63,13 @@ class Character(object):
 
 
     def magic_attack(self, enemy):
-        self.attack_generic(self.magic * self.magic_increment, enemy, Type.Magic)
+        self.attack_generic(self.magic * self.magic_increment, enemy, TypeAttack.Magic)
 
     def weak_attack(self, enemy):
-        self.attack_generic(self.attack * self.weaK_increment, enemy, Type.Physical, )
+        self.attack_generic(self.attack * self.weaK_increment, enemy, TypeAttack.Physical, )
 
     def strong_attack(self, enemy):
-        self.attack_generic(self.attack * self.strong_increment, enemy, Type.Physical)
+        self.attack_generic(self.attack * self.strong_increment, enemy, TypeAttack.Physical)
         self.wait += 1
 
     def active_shield(self, enemy: Character):
@@ -78,7 +83,24 @@ class Character(object):
             self.shield = False
 
     def __repr__(self):
-        obj = "Type: {}\nLife: {}\tAttack: {}\tArmor: {}"
-        obj += "\nMagic: {}\tMagic Resistence: {}"
-        return obj.format(self.type, self.life, self.attack,
-                          self.armor, self.magic, self.magic_resistence)
+        result = ""
+
+        result += Fore.GREEN
+        result += "------------------------------------------------------\n"
+        result += "| Type: {}\n"
+        result += "| Life: {}\tAttack: {}\tArmor: {}\n"
+        result += "| Magic: {}\tMagic Resistence: {}\n"
+        result += "| Critical Chance: {}  Critical Damage: {}\n"
+        result += "------------------------------------------------------"
+        result += Style.RESET_ALL
+
+        return result.format(
+            Fore.WHITE + str(self.type) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.life) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.attack) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.armor) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.magic) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.magic_resistence) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.critical_chance) + "%" + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.critical_damage * 100) + "%" + Style.RESET_ALL + Fore.GREEN
+        )

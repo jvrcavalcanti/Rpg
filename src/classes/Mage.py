@@ -4,4 +4,4 @@ class Mage(Character):
     def __init__(self, life=3, attack=3, armor=3, magic=0):
         super().__init__(2, 1, 1, 6)
         self.type = "Mage"
-        self.magic_increment = 1.2
+        self.magic_increment += 0.2

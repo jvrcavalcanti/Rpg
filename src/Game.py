@@ -2,6 +2,7 @@ from Character import Character
 from Classes import Classes
 import random as rand
 import os
+from colorama import Fore, Style
 
 
 class Game(object):
@@ -39,7 +40,9 @@ class Game(object):
         self.player.update()
         self.enemy.update()
         
+        print(Fore.RED)
         print("\n/************************ End game ********************************/")
+        print(Style.RESET_ALL)
 
         print("\nPlayer:\n{}\n".format(self.player))
         print("\nEnemy:\n{}\n".format(self.enemy))
@@ -54,6 +57,7 @@ class Game(object):
 
     def user_input(self, commands):
         try:
+            print(Fore.CYAN)
             template = "\nEscolha uma opção para fazer uma ação:"
             i = 1
             for command in commands:
@@ -65,10 +69,13 @@ class Game(object):
             if op not in range(1, len(commands) + 1):
                 print("\nOpção inválida")
                 return None
+            print(Style.RESET_ALL)
 
             return op
         except Exception:
-            print("\nOpção inválida")
+            print(Fore.RED)
+            print("Opção inválida")
+            print(Style.RESET_ALL)
 
 
     def run(self):

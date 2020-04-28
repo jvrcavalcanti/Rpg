@@ -13,7 +13,7 @@ pipenv install
 ## Run
 
 ```bash
-python src/main.py
+pipenv run start
 ```
 
 ## Build
