@@ -22,6 +22,8 @@ pipenv run start
 pipenv run build
 ```
 
+Directory 'dist'
+
 ## Classes
 
 * Points distribution: 10
@@ -34,9 +36,9 @@ pipenv run build
 
 ### Paladin
 - Life: 4
-- Attack: 1
-- Armor: 4
-- Magic: 1
+- Attack: 2
+- Armor: 2
+- Magic: 2
 
 ### Mage
 - Life: 2

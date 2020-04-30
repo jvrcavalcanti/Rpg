@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
-import random
 from colorama import Fore, Style
+import random
 
 
 class TypeAttack(Enum):
@@ -12,25 +12,73 @@ class Character(object):
     def __init__(self, life = 3, attack = 3, armor = 3, magic = 0):
         self.type = "Character"
 
-        # Base
-        self.life = float("{0:.2f}".format(life ** 3 + 150))
-        self.attack = float("{0:.2f}".format(2.75 * attack + 18))
-        self.critical_chance = float("{0:.2f}".format(10 * attack))
-        self.armor = float("{0:.2f}".format(2.5 * armor + 10))
-        self.magic = float("{0:.2f}".format(8 * magic))
-        self.magic_resistence = float("{0:.2f}".format(4 * magic + 15))
-
-        # Increments
+        # Increments no base
         self.shield_increment = 1.4
         self.weaK_increment = 1.0
         self.strong_increment = 1.2
-        self.magic_increment = 0.8
         self.critical_damage = 1.5
+        self.magic_increment = 1.0
 
-        # others
+        # Others no base
+        self.cost_mp = 25
         self.shield = False
         self.wait = 0
         self.moviments = []
+
+        self.increments = {
+            "attack": {
+                "increment": 2.75,
+                "base": 18
+            },
+            "critical": {
+                "increment": 10
+            },
+            "magic": {
+                "increment": 6.5
+            },
+            "life": {
+                "increment": 3,
+                "base": 150
+            },
+            "armor": {
+                "increment": 2.5,
+                "base": 10
+            },
+            "magic_resistance": {
+                "increment": 4.5,
+                "base": 19
+            },
+            "mp": {
+                "increment": 35
+            }
+        }
+
+        ## Attack
+        self.attack = float("{0:.2f}".format(
+            self.increments["attack"]["increment"] * attack + self.increments["attack"]["base"])
+        )
+        self.critical_chance = float("{0:.2f}".format(
+            self.increments["critical"]["increment"] * attack)
+        )
+        self.magic = float("{0:.2f}".format(
+            self.increments["magic"]["increment"] * magic)
+        )
+
+        ## Tank
+        self.life = float("{0:.2f}".format(
+            self.increments["life"]["increment"] ** 3 + self.increments["life"]["base"])
+        )
+        self.armor = float("{0:.2f}".format(
+            self.increments["armor"]["increment"] * armor + self.increments["armor"]["base"])
+        )
+        self.magic_resistence = float("{0:.2f}".format(
+            self.increments["magic_resistance"]["increment"] * magic + self.increments["magic_resistance"]["base"])
+        )
+
+        ## Others
+        self.mp = float("{0:.2f}".format(
+            self.increments["mp"]["increment"] * magic)
+        )
 
     def add_moviments(self, moviment):
         self.moviments.append(moviment)
@@ -45,9 +93,17 @@ class Character(object):
 
     def attack_generic(self, attack, enemy: Character, type: TypeAttack):
         damage = 0
+        cost_mp = 0
 
         if type is TypeAttack.Magic:
             damage = attack - enemy.magic_resistence
+
+            cost_mp = self.cost_mp
+
+            if self.mp - self.cost_mp < 0:
+                damage = 0
+                cost_mp = 0
+                print(Fore.RED + "Mp Onvoldoende" + Style.RESET_ALL)
 
         if type is TypeAttack.Physical:
             damage = attack - enemy.armor
@@ -59,6 +115,7 @@ class Character(object):
         if damage < 0:
             damage = 0
 
+        self.mp -= cost_mp
         enemy.life -= damage
 
 
@@ -89,7 +146,7 @@ class Character(object):
         result += "------------------------------------------------------\n"
         result += "| Type: {}\n"
         result += "| Life: {}\tAttack: {}\tArmor: {}\n"
-        result += "| Magic: {}\tMagic Resistence: {}\n"
+        result += "| Magic: {}\tMagic Resistence: {}\tMp: {}\n"
         result += "| Critical Chance: {}  Critical Damage: {}\n"
         result += "------------------------------------------------------"
         result += Style.RESET_ALL
@@ -101,6 +158,7 @@ class Character(object):
             Fore.WHITE + str(self.armor) + Style.RESET_ALL + Fore.GREEN,
             Fore.WHITE + str(self.magic) + Style.RESET_ALL + Fore.GREEN,
             Fore.WHITE + str(self.magic_resistence) + Style.RESET_ALL + Fore.GREEN,
+            Fore.WHITE + str(self.mp) + Style.RESET_ALL + Fore.GREEN,
             Fore.WHITE + str(self.critical_chance) + "%" + Style.RESET_ALL + Fore.GREEN,
             Fore.WHITE + str(self.critical_damage * 100) + "%" + Style.RESET_ALL + Fore.GREEN
         )
